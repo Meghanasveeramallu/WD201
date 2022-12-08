@@ -1,72 +1,122 @@
 "use strict";
-const { Model, Op } = require("sequelize");
-
+const { Op, where } = require("sequelize");
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
     static associate(models) {
-    }
-    static addaTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
-    }
-    static getAllTodos() {
-      return this.findAll({ order: [["id", "ASC"]] });
-    }
-    static async completedItemsAre() {
-      return this.findAll({
-        where: { completed: { [Op.eq]: true } },
-        order: [["id", "DESC"]],
+      Todo.belongsTo(models.User, {
+        foreignKey: "userID",
       });
     }
-    static async remove(id) {
+
+  //This is to add a To Do item of a user with due date
+    static async addaTodo({ title, dueDate, userID }) {
+      return this.create({
+        title: title,
+        dueDate: dueDate,
+        completed: false,
+        userID,
+      });
+    }
+
+    //This is to get To Do items that are due of a user 
+    static async overDue(userID) {
+      return await Todo.findAll({
+        where: {
+          dueDate: {
+            [Op.lt]: new Date(),
+          },
+          userID,
+          completed: false,
+        },
+        order: [["id", "ASC"]],
+      });
+    }
+
+    //This is to get To Do items that are due today of a user 
+    static async dueToday(userID) {
+      return await Todo.findAll({
+        where: {
+          dueDate: {
+            [Op.eq]: new Date(),
+          },
+          userID,
+          completed: false,
+        },
+        order: [["id", "ASC"]],
+      });
+    }
+
+    //This is to get To Do items thar are completed of a user 
+    static async completedItemsAre(userID) {
+      return await Todo.findAll({
+        where: {
+          completed: true,
+          userID,
+        },
+      });
+    }
+
+    //This is to get To Do items that are due later of a user 
+    static async dueLater(userID) {
+      return await Todo.findAll({
+        where: {
+          dueDate: {
+            [Op.gt]: new Date(),
+          },
+          userID,
+          completed: false,
+        },
+        order: [["id", "ASC"]],
+      });
+    }
+
+    //This is to remove a To Do item of a user 
+    static async remove(id, userID) {
       return this.destroy({
         where: {
           id,
+          userID,
         },
       });
     }
-    setCompletionStatusAs(bool) {
-      return this.update({ completed: bool });
-    }
-    static async overdue() {
+
+    //This is to get all To Do items of a user
+    static async getTodos(userID) {
       return this.findAll({
         where: {
-          dueDate: {
-            [Op.lt]: new Date().toLocaleDateString("en-CA"),
-          },
-          completed: false,
+          userID,
         },
-        order: [["id", "ASC"]],
       });
     }
-    static async dueToday() {
-      return this.findAll({
-        where: {
-          dueDate: {
-            [Op.eq]: new Date().toLocaleDateString("en-CA"),
-          },
-          completed: false,
-        },
-        order: [["id", "ASC"]],
-      });
-    }
-    static async dueLater() {
-      return this.findAll({
-        where: {
-          dueDate: {
-            [Op.gt]: new Date().toLocaleDateString("en-CA"),
-          },
-          completed: false,
-        },
-        order: [["id", "ASC"]],
-      });
+
+  //This is to update a To Do item
+  setCompletionStatusAs(status) {
+      return this.update({ completed: status });
     }
   }
-
+  
   Todo.init(
     {
-      title: DataTypes.STRING,
-      dueDate: DataTypes.DATEONLY,
-      completed: DataTypes.BOOLEAN,
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: 5,
+        },
+      },
+      dueDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        validate: {
+          notNull: true,
+        },
+      },
+      completed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
       sequelize,
