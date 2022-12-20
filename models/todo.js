@@ -3,16 +3,10 @@ const { Op, where } = require("sequelize");
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       Todo.belongsTo(models.User, {
         foreignKey: "userID",
       });
-      // define association here
     }
 
     static async addaTodo({ title, dueDate, userID }) {
@@ -71,8 +65,6 @@ module.exports = (sequelize, DataTypes) => {
         order: [["id", "ASC"]],
       });
     }
-
-    
 
     static async remove(id, userID) {
       return this.destroy({
