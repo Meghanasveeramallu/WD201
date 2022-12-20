@@ -89,14 +89,14 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", async function (request, response) {
  /* response.render("index", {
-    title: "Mera Todo Manager",
+    title: "My Todo Manager",
     csrfToken: request.csrfToken(),
   });*/
   if (request.user) {
     return response.redirect("/todos");
   } else {
     response.render("index", {
-      title: "Mera Todo Manager",
+      title: "My Todo Manager",
       csrfToken: request.csrfToken(),
     });
   }
@@ -114,7 +114,7 @@ app.get("/todos",
       const completedItems = await Todo.completedItemsAre(loggedIn);
       if (request.accepts("html")) {
         response.render("todos", {
-          title: "Mera Todo-Manager",
+          title: "My Todo-Manager",
           userName,
           overDue,
           dueToday,
