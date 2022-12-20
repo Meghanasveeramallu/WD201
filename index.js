@@ -1,4 +1,6 @@
 const app = require("./app");
-app.listen(8000, () => {
-  console.log("Started express server at 8000");
+
+// eslint-disable-next-line no-undef
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Started express server at port 3000");
 });
