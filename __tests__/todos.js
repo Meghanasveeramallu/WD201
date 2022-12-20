@@ -5,7 +5,6 @@ const app = require("../app");
 
 let server, agent;
 
-
 function extractCsrfToken(res) {
   var $ = cheerio.load(res.text);
   return $("[name=_csrf]").val();
@@ -37,7 +36,7 @@ describe("To-do Manager", function () {
     }
   });
 
-  test("sign up test", async () => {
+  test("A test for user to Sign-Up", async () => {
     let res = await agent.get("/signup");
     const csrfTokenIs = extractCsrfToken(res);
     res = await agent.post("/users").send({
@@ -50,7 +49,7 @@ describe("To-do Manager", function () {
     expect(res.statusCode).toBe(302);
   });
 
-  test("A test for sign-out", async () => {
+  test("A test for user to Sign-Out", async () => {
     let response = await agent.get("/todos");
     expect(response.statusCode).toBe(200);
     response = await agent.get("/signout");
@@ -59,7 +58,7 @@ describe("To-do Manager", function () {
     expect(response.statusCode).toBe(302);
   });
 //
-  test("Cannot mark as complete/incomplete a todo for other user", async () => {
+  test("A user cannot update or mark as complete/incomplete a To Do Item of another user", async () => {
     //create UserA account
     let res = await agent.get("/signup");
     let csrfToken = extractCsrfToken(res);
@@ -114,7 +113,7 @@ describe("To-do Manager", function () {
     expect(markIncompleteResponse.statusCode).toBe(422);
   });
 
-  test("One user cannot delete todo of other user", async () => {
+  test("A user cannot delete a To Do Item of another user", async () => {
     //create UserA account
     let res = await agent.get("/signup");
     let csrfToken = extractCsrfToken(res);
@@ -173,7 +172,7 @@ describe("To-do Manager", function () {
     expect(response.statusCode).toBe(302);
   });
 
-  test("A test for marking a todo as complete", async () => {
+  test("A test for marking a To Do Item as complete", async () => {
     const agent = request.agent(server);
     await login(agent, "user.a@test.com", "12345678");
     let res = await agent.get("/todos");
@@ -205,7 +204,7 @@ describe("To-do Manager", function () {
     expect(parsedUpdateResponse.completed).toBe(true);
   });
 
-  test("marking todo as incomplete", async () => {
+  test("A test for marking a To Do Item as incomplete", async () => {
     const agent = request.agent(server);
     await login(agent, "user.a@test.com", "12345678");
     let res = await agent.get("/todos");
@@ -237,7 +236,7 @@ describe("To-do Manager", function () {
     expect(parsedUpdateResponse.completed).toBe(false);
   });
 
-  test("Test for deleting a todo", async () => {
+  test("A test for deleting a To Do Item", async () => {
     const agent = request.agent(server);
     await login(agent, "user.a@test.com", "12345678");
     let res = await agent.get("/todos");
@@ -275,3 +274,4 @@ describe("To-do Manager", function () {
     expect(parsedDeleteResponse31).toBe(false);
   });
 });
+
