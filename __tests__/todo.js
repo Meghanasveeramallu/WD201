@@ -22,7 +22,7 @@ const login = async (agent, username, password) => {
   });
 };
 
-//test cases
+//test cases of To Do Items
 describe("Test Cases of To Do Items", () => {
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
@@ -34,7 +34,7 @@ describe("Test Cases of To Do Items", () => {
     server.close();
   });
 
-  //sign up
+  //sign up for a new user
   test("Sign up", async () => {
     let res = await agent.get("/signup");
     const csrfToken = extractCsrfToken(res);
@@ -48,7 +48,7 @@ describe("Test Cases of To Do Items", () => {
     expect(res.statusCode).toBe(302);
   });
 
-  //sign out
+  //sign out for a user
   test("Sign out", async () => {
     let res = await agent.get("/todos");
     expect(res.statusCode).toBe(200);
@@ -58,7 +58,7 @@ describe("Test Cases of To Do Items", () => {
     expect(res.statusCode).toBe(302);
   });
 
-  //Creating a new to do item
+  //To Create a new To Do item
   test("Create a new To Do Item", async () => {
     const agent = request.agent(server);
     await login(agent, "user.a@test.com", "123456789");
@@ -73,7 +73,7 @@ describe("Test Cases of To Do Items", () => {
     expect(response.statusCode).toBe(302); //http status code
   });
 
-  //marking a to do item as completed
+  //To mark a To Do Item as completed
   //updating a to do item
   test("Mark a To Do Item as completed ", async () => {
     const agent = request.agent(server);
@@ -104,7 +104,7 @@ describe("Test Cases of To Do Items", () => {
     expect(parsedUpdateResponse.completed).toBe(true);
   });
 
-  //Deleting a to do item
+  //To Delete a To Do Item
   test(" Delete a To Do Item using specific ID", async () => {
     const agent = request.agent(server);
     await login(agent, "user.a@test.com", "123456789");
